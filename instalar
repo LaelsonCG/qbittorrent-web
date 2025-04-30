@@ -57,8 +57,15 @@ sudo systemctl start qbittorrent-nox
 ip=$(curl -s -4 ifconfig.me)
 
 echo -e "\n${verde}INSTALAÇÃO CONCLUÍDA.${reset}"
-echo -e "---------------------------------------------------------------------------"
-echo -e "${azul}ACESSE:${reset} http://${ip}:8080"
-echo -e "${azul}Usuário padrão:${reset} admin"
-echo -e "${azul}Senha padrão:${reset} adminadmin"
-echo -e "Você pode (e deve) alterar as credenciais pela interface web.\n"
+if systemctl is-active --quiet qbittorrent-nox; then
+    echo -e "\n${verde}qBittorrent iniciado com sucesso.${reset}"
+    echo -e "---------------------------------------------------------------------------"
+    echo -e "${azul}ACESSE:${reset} http://${ip}:8080"
+    echo -e "${azul}Usuário padrão:${reset} admin"
+    echo -e "${azul}Senha padrão:${reset} adminadmin"
+    echo -e "Você pode (e deve) alterar as credenciais pela interface web.\n"
+
+else
+    echo -e "\n\033[1;31m[ERRO] Falha ao iniciar o serviço qBittorrent.\033[0m"
+    systemctl status qbittorrent-nox
+fi
