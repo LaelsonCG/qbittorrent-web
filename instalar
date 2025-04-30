@@ -30,9 +30,7 @@ echo -e "${verde}[+] Configurando Web UI para aceitar conexões externas...${res
 CONFIG_FILE="/root/.config/qBittorrent/qBittorrent.conf"
 mkdir -p "$(dirname "$CONFIG_FILE")"
 touch "$CONFIG_FILE"
-grep -q "WebUI\\Address=" "$CONFIG_FILE" || echo "WebUI\\Address=0.0.0.0" >> "$CONFIG_FILE"
-grep -q "WebUI\\Port=" "$CONFIG_FILE" || echo "WebUI\\Port=8080" >> "$CONFIG_FILE"
-wget -O wget -O /root/.config/qBittorrent/qBittorrent.conf https://raw.githubusercontent.com/LaelsonCG/qbittorrent-web/refs/heads/main/qBittorrent.conf
+wget -O /root/.config/qBittorrent/qBittorrent.conf https://raw.githubusercontent.com/LaelsonCG/qbittorrent-web/refs/heads/main/qBittorrent.conf > /dev/null
 
 echo -e "${verde}[+] Criando serviço systemd...${reset}"
 sudo tee /etc/systemd/system/qbittorrent-nox.service > /dev/null <<EOF
@@ -43,7 +41,7 @@ After=network.target
 [Service]
 Type=forking
 ExecStart=/usr/bin/qbittorrent-nox -d
-User=$USER
+User=root
 Restart=on-failure
 
 [Install]
