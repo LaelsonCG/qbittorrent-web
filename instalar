@@ -22,7 +22,7 @@ fi
 sudo apt install -y -qq qbittorrent-nox curl > /dev/null
 
 echo -e "${verde}[+] Inicializando qbittorrent-nox para gerar configs...${reset}"
-yes | qbittorrent-nox &> /dev/null &
+yes | qbittorrent-nox -d
 sleep 3
 killall qbittorrent-nox
 
