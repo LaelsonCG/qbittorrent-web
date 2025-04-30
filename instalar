@@ -28,7 +28,7 @@ sleep 3
 pkill qbittorrent-nox
 
 echo -e "${verde}[+] Configurando Web UI para aceitar conexões externas...${reset}"
-CONFIG_FILE="$HOME/.config/qBittorrent/qBittorrent.conf"
+CONFIG_FILE="/root/.config/qBittorrent/qBittorrent.conf"
 mkdir -p "$(dirname "$CONFIG_FILE")"
 touch "$CONFIG_FILE"
 grep -q "WebUI\\Address=" "$CONFIG_FILE" || echo "WebUI\\Address=0.0.0.0" >> "$CONFIG_FILE"
