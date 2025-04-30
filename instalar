@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Limpar o terminal
+clear
+
+# Cores
+verde="\033[1;32m"
+azul="\033[1;34m"
+reset="\033[0m"
+
+echo -e "${azul}##############################################"
+echo -e "#  INSTALADOR QBITTORRENT-NOX (WEB) by LaelsonCG"
+echo -e "#  GitHub: https://github.com/LaelsonCG"
+echo -e "##############################################${reset}\n"
+
+echo -e "${verde}[+] Atualizando pacotes do sistema...${reset}"
+sudo apt update -qq && sudo apt upgrade -y -qq
+
+echo -e "${verde}[+] Instalando dependências...${reset}"
+sudo apt install -y -qq qbittorrent-nox curl > /dev/null
+
+echo -e "${verde}[+] Criando serviço systemd...${reset}"
+
+# Cria usuário dedicado se não existir
+id -u qbittorrent &>/dev/null || sudo useradd -r -s /usr/sbin/nologin qbittorrent
+
+sudo bash -c 'cat > /etc/systemd/system/qbittorrent-nox.service' <<EOF
+[Unit]
+Description=qBittorrent-nox
+After=network.target
+
+[Service]
+User=qbittorrent
+ExecStart=/usr/bin/qbittorrent-nox --webui-port=8080
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable qbittorrent-nox
+sudo systemctl start qbittorrent-nox
+
+ip=$(curl -s -4 ifconfig.me)
+
+echo -e "\n${verde}INSTALAÇÃO CONCLUÍDA.${reset}"
+echo -e "---------------------------------------------------------------------------"
+echo -e "${azul}ACESSE:${reset} http://${ip}:8080"
+echo -e "${azul}Usuário padrão:${reset} admin"
+echo -e "${azul}Senha padrão:${reset} adminadmin"
+echo -e "Você pode (e deve) alterar as credenciais pela interface web."
+
