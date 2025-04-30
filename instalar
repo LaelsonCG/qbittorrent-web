@@ -30,7 +30,7 @@ echo -e "${verde}[+] Configurando Web UI para aceitar conexões externas...${res
 CONFIG_FILE="/root/.config/qBittorrent/qBittorrent.conf"
 mkdir -p "$(dirname "$CONFIG_FILE")"
 touch "$CONFIG_FILE"
-wget -O /root/.config/qBittorrent/qBittorrent.conf https://raw.githubusercontent.com/LaelsonCG/qbittorrent-web/refs/heads/main/qBittorrent.conf > /dev/null
+wget -O /root/.config/qBittorrent/qBittorrent.conf https://raw.githubusercontent.com/LaelsonCG/qbittorrent-web/refs/heads/main/qBittorrent.conf
 
 echo -e "${verde}[+] Criando serviço systemd...${reset}"
 sudo tee /etc/systemd/system/qbittorrent-nox.service > /dev/null <<EOF
