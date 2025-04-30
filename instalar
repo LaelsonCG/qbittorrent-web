@@ -1,37 +1,49 @@
 #!/bin/bash
 
-# Limpar o terminal
-clear
-
 # Cores
 verde="\033[1;32m"
 azul="\033[1;34m"
 reset="\033[0m"
 
 echo -e "${azul}##############################################"
-echo -e "#  INSTALADOR QBITTORRENT-NOX (WEB) by LaelsonCG"
-echo -e "#  GitHub: https://github.com/LaelsonCG"
+echo -e "# INSTALADOR QBITTORRENT-NOX (WEBUI) by LaelsonCG"
+echo -e "# GitHub: https://github.com/LaelsonCG"
 echo -e "##############################################${reset}\n"
 
-echo -e "${verde}[+] Atualizando pacotes do sistema...${reset}"
+echo -e "${verde}[+] Atualizando pacotes...${reset}"
 sudo apt update -qq && sudo apt upgrade -y -qq
 
-echo -e "${verde}[+] Instalando dependências...${reset}"
+echo -e "${verde}[+] Instalando qbittorrent-nox...${reset}"
+if ! apt-cache show qbittorrent-nox > /dev/null 2>&1; then
+    echo -e "${verde}[+] Adicionando repositório PPA do qBittorrent...${reset}"
+    sudo add-apt-repository -y ppa:qbittorrent-team/qbittorrent-stable > /dev/null 2>&1
+    sudo apt update -qq
+fi
 sudo apt install -y -qq qbittorrent-nox curl > /dev/null
 
+echo -e "${verde}[+] Inicializando para gerar arquivos de config...${reset}"
+pkill -u $(whoami) qbittorrent-nox 2>/dev/null
+qbittorrent-nox &> /dev/null &
+sleep 3
+pkill qbittorrent-nox
+
+echo -e "${verde}[+] Configurando Web UI para aceitar conexões externas...${reset}"
+CONFIG_FILE="$HOME/.config/qBittorrent/qBittorrent.conf"
+mkdir -p "$(dirname "$CONFIG_FILE")"
+touch "$CONFIG_FILE"
+grep -q "WebUI\\Address=" "$CONFIG_FILE" || echo "WebUI\\Address=0.0.0.0" >> "$CONFIG_FILE"
+grep -q "WebUI\\Port=" "$CONFIG_FILE" || echo "WebUI\\Port=8080" >> "$CONFIG_FILE"
+
 echo -e "${verde}[+] Criando serviço systemd...${reset}"
-
-# Cria usuário dedicado se não existir
-id -u qbittorrent &>/dev/null || sudo useradd -r -s /usr/sbin/nologin qbittorrent
-
-sudo bash -c 'cat > /etc/systemd/system/qbittorrent-nox.service' <<EOF
+sudo tee /etc/systemd/system/qbittorrent-nox.service > /dev/null <<EOF
 [Unit]
-Description=qBittorrent-nox
+Description=qBittorrent Daemon Service
 After=network.target
 
 [Service]
-User=qbittorrent
-ExecStart=/usr/bin/qbittorrent-nox --webui-port=8080
+Type=forking
+ExecStart=/usr/bin/qbittorrent-nox -d
+User=$USER
 Restart=on-failure
 
 [Install]
@@ -39,7 +51,7 @@ WantedBy=multi-user.target
 EOF
 
 sudo systemctl daemon-reload
-sudo systemctl enable qbittorrent-nox
+sudo systemctl enable qbittorrent-nox > /dev/null
 sudo systemctl start qbittorrent-nox
 
 ip=$(curl -s -4 ifconfig.me)
@@ -49,5 +61,4 @@ echo -e "-----------------------------------------------------------------------
 echo -e "${azul}ACESSE:${reset} http://${ip}:8080"
 echo -e "${azul}Usuário padrão:${reset} admin"
 echo -e "${azul}Senha padrão:${reset} adminadmin"
-echo -e "Você pode (e deve) alterar as credenciais pela interface web."
-
+echo -e "Você pode (e deve) alterar as credenciais pela interface web.\n"
