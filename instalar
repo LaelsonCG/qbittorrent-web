@@ -21,11 +21,10 @@ if ! apt-cache show qbittorrent-nox > /dev/null 2>&1; then
 fi
 sudo apt install -y -qq qbittorrent-nox curl > /dev/null
 
-echo -e "${verde}[+] Inicializando para gerar arquivos de config...${reset}"
-pkill -u $(whoami) qbittorrent-nox 2>/dev/null
-qbittorrent-nox &> /dev/null &
+echo -e "${verde}[+] Inicializando qbittorrent-nox para gerar configs...${reset}"
+yes | qbittorrent-nox &> /dev/null &
 sleep 3
-pkill qbittorrent-nox
+killall qbittorrent-nox
 
 echo -e "${verde}[+] Configurando Web UI para aceitar conexões externas...${reset}"
 CONFIG_FILE="/root/.config/qBittorrent/qBittorrent.conf"
