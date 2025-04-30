@@ -32,8 +32,7 @@ mkdir -p "$(dirname "$CONFIG_FILE")"
 touch "$CONFIG_FILE"
 grep -q "WebUI\\Address=" "$CONFIG_FILE" || echo "WebUI\\Address=0.0.0.0" >> "$CONFIG_FILE"
 grep -q "WebUI\\Port=" "$CONFIG_FILE" || echo "WebUI\\Port=8080" >> "$CONFIG_FILE"
-
-wget -O qBittorrent.conf https://raw.githubusercontent.com/LaelsonCG/qbittorrent-web/refs/heads/main/qBittorrent.conf
+wget -O wget -O /root/.config/qBittorrent/qBittorrent.conf https://raw.githubusercontent.com/LaelsonCG/qbittorrent-web/refs/heads/main/qBittorrent.conf
 
 echo -e "${verde}[+] Criando serviço systemd...${reset}"
 sudo tee /etc/systemd/system/qbittorrent-nox.service > /dev/null <<EOF
